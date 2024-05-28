@@ -37,6 +37,9 @@ class EasyLocalization extends StatefulWidget {
   /// Overrides device locale.
   final Locale? startLocale;
 
+  /// Force update of the controller for runtime [assetLoader] update. 
+  final bool forceUpdateController;
+
   /// Trigger for using only language code for reading localization files.
   /// @Default value false
   /// Example:
@@ -141,6 +144,7 @@ class EasyLocalization extends StatefulWidget {
     this.assetLoader = const RootBundleAssetLoader(),
     this.extraAssetLoaders,
     this.saveLocale = true,
+    this.forceUpdateController = false,
     this.errorWidget,
   })  : assert(supportedLocales.isNotEmpty),
         assert(path.isNotEmpty),
@@ -173,28 +177,16 @@ class _EasyLocalizationState extends State<EasyLocalization> {
 
   @override
   void initState() {
-    EasyLocalization.logger.debug('Init state');
-    localizationController = EasyLocalizationController(
-      saveLocale: widget.saveLocale,
-      fallbackLocale: widget.fallbackLocale,
-      supportedLocales: widget.supportedLocales,
-      startLocale: widget.startLocale,
-      assetLoader: widget.assetLoader,
-      extraAssetLoaders: widget.extraAssetLoaders,
-      useOnlyLangCode: widget.useOnlyLangCode,
-      useFallbackTranslations: widget.useFallbackTranslations,
-      path: widget.path,
-      onLoadError: (FlutterError e) {
-        setState(() {
-          translationsLoadError = e;
-        });
-      },
-    );
-    // causes localization to rebuild with new language
-    localizationController!.addListener(() {
-      if (mounted) setState(() {});
-    });
+    _udpateLocalizationController('Init state');
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant EasyLocalization oldWidget) {
+    if (widget.forceUpdateController) {
+      _udpateLocalizationController('Did update widget');
+    }
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -222,6 +214,34 @@ class _EasyLocalizationState extends State<EasyLocalization> {
         ignorePluralRules: widget.ignorePluralRules,
       ),
     );
+  }
+
+  void _udpateLocalizationController(String debugMessage) {
+    if (localizationController != null) {
+       localizationController!.dispose();
+    }
+    
+    EasyLocalization.logger.debug(debugMessage);
+    localizationController = EasyLocalizationController(
+      saveLocale: widget.saveLocale,
+      fallbackLocale: widget.fallbackLocale,
+      supportedLocales: widget.supportedLocales,
+      startLocale: widget.startLocale,
+      assetLoader: widget.assetLoader,
+      extraAssetLoaders: widget.extraAssetLoaders,
+      useOnlyLangCode: widget.useOnlyLangCode,
+      useFallbackTranslations: widget.useFallbackTranslations,
+      path: widget.path,
+      onLoadError: (FlutterError e) {
+        setState(() {
+          translationsLoadError = e;
+        });
+      },
+    );
+    // causes localization to rebuild with new language
+    localizationController!.addListener(() {
+      if (mounted) setState(() {});
+    });
   }
 }
 
