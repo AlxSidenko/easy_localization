@@ -150,7 +150,8 @@ class Localization {
     late String res;
 
     final pluralRule = _pluralRule(_locale.languageCode, value);
-    final pluralCase = pluralRule != null ? pluralRule() : _pluralCaseFallback(value);
+    final pluralCase =
+        pluralRule != null ? pluralRule() : _pluralCaseFallback(value);
 
     switch (pluralCase) {
       case PluralCase.ZERO:
@@ -193,7 +194,8 @@ class Localization {
     if (subKey == 'other') return _resolve('$key.other');
 
     final tag = '$key.$subKey';
-    var resource = _resolve(tag, logging: false, fallback: _fallbackTranslations != null);
+    var resource =
+        _resolve(tag, logging: false, fallback: _fallbackTranslations != null);
     if (resource == tag) {
       resource = _resolve('$key.other');
     }

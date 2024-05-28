@@ -46,8 +46,7 @@ String tr(
 }
 
 bool trExists(String key) {
-  return Localization.instance
-      .exists(key);
+  return Localization.instance.exists(key);
 }
 
 /// {@template plural}

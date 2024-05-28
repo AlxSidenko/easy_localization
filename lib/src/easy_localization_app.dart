@@ -37,7 +37,7 @@ class EasyLocalization extends StatefulWidget {
   /// Overrides device locale.
   final Locale? startLocale;
 
-  /// Force update of the controller for runtime [assetLoader] update. 
+  /// Force update of the controller for runtime [assetLoader] update.
   final bool forceUpdateController;
 
   /// Trigger for using only language code for reading localization files.
@@ -171,7 +171,7 @@ class EasyLocalization extends StatefulWidget {
 }
 
 class _EasyLocalizationState extends State<EasyLocalization> {
-  _EasyLocalizationDelegate? delegate;
+  // _EasyLocalizationDelegate? delegate;
   EasyLocalizationController? localizationController;
   FlutterError? translationsLoadError;
 
@@ -203,7 +203,8 @@ class _EasyLocalizationState extends State<EasyLocalization> {
           ? widget.errorWidget!(translationsLoadError)
           : ErrorWidget(translationsLoadError!);
     }
-    return _EasyLocalizationProvider(
+    final _EasyLocalizationProvider localisationProvider =
+        _EasyLocalizationProvider(
       widget,
       localizationController!,
       delegate: _EasyLocalizationDelegate(
@@ -212,15 +213,21 @@ class _EasyLocalizationState extends State<EasyLocalization> {
         useFallbackTranslationsForEmptyResources:
             widget.useFallbackTranslationsForEmptyResources,
         ignorePluralRules: widget.ignorePluralRules,
+        forceLoad: widget.forceUpdateController,
       ),
     );
+    if (widget.forceUpdateController &&
+        localisationProvider.currentLocale != null) {
+      localisationProvider.delegate.load(localisationProvider.currentLocale!);
+    }
+    return localisationProvider;
   }
 
   void _udpateLocalizationController(String debugMessage) {
     if (localizationController != null) {
-       localizationController!.dispose();
+      localizationController!.dispose();
     }
-    
+
     EasyLocalization.logger.debug(debugMessage);
     localizationController = EasyLocalizationController(
       saveLocale: widget.saveLocale,
@@ -323,6 +330,7 @@ class _EasyLocalizationDelegate extends LocalizationsDelegate<Localization> {
   final EasyLocalizationController? localizationController;
   final bool useFallbackTranslationsForEmptyResources;
   final bool ignorePluralRules;
+  final bool forceLoad;
 
   ///  * use only the lang code to generate i18n file path like en.json or ar.json
   // final bool useOnlyLangCode;
@@ -332,6 +340,7 @@ class _EasyLocalizationDelegate extends LocalizationsDelegate<Localization> {
     this.ignorePluralRules = true,
     this.localizationController,
     this.supportedLocales,
+    this.forceLoad = false,
   }) {
     EasyLocalization.logger.debug('Init Localization Delegate');
   }
@@ -342,7 +351,7 @@ class _EasyLocalizationDelegate extends LocalizationsDelegate<Localization> {
   @override
   Future<Localization> load(Locale value) async {
     EasyLocalization.logger.debug('Load Localization Delegate');
-    if (localizationController!.translations == null) {
+    if (localizationController!.translations == null || forceLoad) {
       await localizationController!.loadTranslations();
     }
 
@@ -358,5 +367,5 @@ class _EasyLocalizationDelegate extends LocalizationsDelegate<Localization> {
   }
 
   @override
-  bool shouldReload(LocalizationsDelegate<Localization> old) => false;
+  bool shouldReload(LocalizationsDelegate<Localization> old) => forceLoad;
 }

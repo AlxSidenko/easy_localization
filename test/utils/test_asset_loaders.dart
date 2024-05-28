@@ -121,21 +121,21 @@ class JsonAssetLoader extends AssetLoader {
             }),
       'test_empty_plurals': (locale.languageCode == 'fb'
           ? {
-        'zero': '',
-        'one': '',
-        'two': '',
-        'few': '',
-        'many': '',
-        'other': '',
-      }
+              'zero': '',
+              'one': '',
+              'two': '',
+              'few': '',
+              'many': '',
+              'other': '',
+            }
           : {
-        'zero': '',
-        'one': '',
-        'two': '',
-        'few': '',
-        'many': '',
-        'other': '',
-      })
+              'zero': '',
+              'one': '',
+              'two': '',
+              'few': '',
+              'many': '',
+              'other': '',
+            })
     });
   }
 }
