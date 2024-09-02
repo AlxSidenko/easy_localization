@@ -367,5 +367,5 @@ class _EasyLocalizationDelegate extends LocalizationsDelegate<Localization> {
   }
 
   @override
-  bool shouldReload(LocalizationsDelegate<Localization> old) => forceLoad;
+  bool shouldReload(LocalizationsDelegate<Localization> old) => false;
 }
