@@ -222,10 +222,11 @@ class _EasyLocalizationState extends State<EasyLocalization> {
     );
     if (widget.forceUpdateController &&
         localisationProvider.currentLocale != null) {
-      if (_currentLocale != localisationProvider.currentLocale) {
+      if (_currentLocale != null &&
+          _currentLocale != localisationProvider.currentLocale) {
         localisationProvider.delegate.load(localisationProvider.currentLocale!);
-        _currentLocale = localisationProvider.currentLocale;
       }
+      _currentLocale = localisationProvider.currentLocale;
     }
     return localisationProvider;
   }
