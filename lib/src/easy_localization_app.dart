@@ -174,19 +174,22 @@ class _EasyLocalizationState extends State<EasyLocalization> {
   // _EasyLocalizationDelegate? delegate;
   EasyLocalizationController? localizationController;
   FlutterError? translationsLoadError;
+  Locale? _currentLocale;
 
   @override
   void initState() {
-    _udpateLocalizationController('Init state');
     super.initState();
+
+    _udpateLocalizationController('Init state');
   }
 
   @override
   void didUpdateWidget(covariant EasyLocalization oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
     if (widget.forceUpdateController) {
       _udpateLocalizationController('Did update widget');
     }
-    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -203,6 +206,7 @@ class _EasyLocalizationState extends State<EasyLocalization> {
           ? widget.errorWidget!(translationsLoadError)
           : ErrorWidget(translationsLoadError!);
     }
+
     final _EasyLocalizationProvider localisationProvider =
         _EasyLocalizationProvider(
       widget,
@@ -216,7 +220,13 @@ class _EasyLocalizationState extends State<EasyLocalization> {
         forceLoad: widget.forceUpdateController,
       ),
     );
-
+    if (widget.forceUpdateController &&
+        localisationProvider.currentLocale != null) {
+      if (_currentLocale != localisationProvider.currentLocale) {
+        localisationProvider.delegate.load(localisationProvider.currentLocale!);
+        _currentLocale = localisationProvider.currentLocale;
+      }
+    }
     return localisationProvider;
   }
 
