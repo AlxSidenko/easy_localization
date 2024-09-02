@@ -216,10 +216,7 @@ class _EasyLocalizationState extends State<EasyLocalization> {
         forceLoad: widget.forceUpdateController,
       ),
     );
-    if (widget.forceUpdateController &&
-        localisationProvider.currentLocale != null) {
-      localisationProvider.delegate.load(localisationProvider.currentLocale!);
-    }
+
     return localisationProvider;
   }
 
